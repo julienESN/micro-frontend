@@ -7,8 +7,18 @@ function Navbar() {
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    // TODO: ecouter les evenements du Lobby et du Cart pour mettre a jour les badges
-    // Penser au cleanup
+    const unsubscribeGameJoined = eventBus.on('game:joined', () => {
+      setNotifications(prevNotifications => prevNotifications + 1);
+    });
+
+    const unsubscribeCartUpdated = eventBus.on('cart:updated', (cart) => {
+      setCartCount(cart?.count ?? 0);
+    });
+
+    return () => {
+      unsubscribeGameJoined();
+      unsubscribeCartUpdated();
+    };
   }, []);
 
   return (
